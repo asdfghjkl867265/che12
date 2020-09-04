@@ -1,16 +1,28 @@
 package com.example.numerica;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
 import com.hanheng.a53.beep.BeepClass;
+//import com.example.numerica.dip.DipClass;
+import com.hanheng.a53.dotarray.FontClass;
 import com.example.aircondition.R;
 import com.hanheng.a53.seg7.Seg7Class;
 import com.hanheng.a53.led.LedClass;
+import com.example.numerica.MainActivity;
+import com.example.numerica.MyAdapter;
+//import com.hanheng.matrix.FillContent;
+//import com.hanheng.matrix.FillContent;
+//import com.hanheng.matrix.MyAdapter;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -37,6 +49,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+
+
 @SuppressLint({ "ShowToast", "HandlerLeak" }) 
 public class MainActivity extends Activity implements OnClickListener {
 	private View display;
@@ -50,6 +64,10 @@ public class MainActivity extends Activity implements OnClickListener {
 	private Button count_stop;
 	private Button count_okoil;
 	private Button lock;
+	private Button count_power;
+	private int[] icon;
+	private MyAdapter adapter;
+	private List<FillContent> data_List=new ArrayList<FillContent>();
 //	定义标志位控制启动线程
 	private boolean flag;
 	
@@ -64,6 +82,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_main);
 //		初始化标签
 		init();
+		
 	}
 
 	// 初始化获取每个视图和控件,并添加按钮点击事件
@@ -79,6 +98,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		textview2.setText("油量：");
 		this.count_submit = (Button) display.findViewById(R.id.submit);
 		this.count_okoil = (Button) display.findViewById(R.id.okoil);
+		this.count_power = (Button)display.findViewById(R.id.power);
 		this.count_stop = (Button) display.findViewById(R.id.stop);
 		this.lock = (Button) display.findViewById(R.id.button1);
 		this.count_submit.setOnClickListener(this);
@@ -86,10 +106,12 @@ public class MainActivity extends Activity implements OnClickListener {
 		this.count_btn.setOnClickListener(this);
 		this.count_stop.setOnClickListener(this);
 		this.lock.setOnClickListener(this);
+		this.count_power.setOnClickListener(this);
 		int err = Seg7Class.Init();
 		LedClass.Init();
 		BeepClass.Init();
 		System.out.println("测试:"+err);
+		
 	}
 
 	// 定义handler接收线程回传内容
@@ -111,10 +133,151 @@ public class MainActivity extends Activity implements OnClickListener {
 		return true;
 	}
 
+	/*
+//	初始化数据
+	public void initData(int[] icon){
+		for(int i=0;i<icon.length;i++){
+			FillContent con=new FillContent(icon[i]);
+			data_List.add(con);
+		}
+	}
+	//private Handler uiHandler = new Handler(){
+		public void handleMessage(Message msg){
+			if(msg.what==1){	
+				Log.i("鑾峰彇鏁版嵁", ""+msg.arg1);
+				computed(msg.arg1);
+			}
+		}
+	//};
+		public String addZero(int b){
+			String val = Integer.toBinaryString(b&0xFF);
+			String str="";
+			if(val.length()<8){
+				for(int i=0;i<8-val.length();i++){
+					str+=0;
+				}			
+				return str+=val;
+			}
+			return val;
+		}
+		public void computed(int val){
+			String str=addZero(val);
+			char[] cr=str.toCharArray();
+			int tag;
+			for(int i=0;i<cr.length;i++){
+				if(cr[i]=='0'){
+					tag=0;
+					changeState(i,tag);
+				}else{		
+					changeState(i,1);				
+				}
+			}
+			test=str;
+			
+		}
+	public void changeState(int i,int tag){
+		if(tag==0){
+			switch (i) {
+			case 0:
+				//if(tag1==true)
+				
+				{
+				String str1 ="常欢熊";
+				if(str1.length()!=0){
+					byte[][] data = FontClass.getInstance().setContent(str1,this.getAssets());
+					icon = getIcon(data[0]);
+//					清空数据
+					adapter.clear();
+//					初始化数据
+					initData(icon);
+//					通知数据改变 
+					adapter.notifyDataSetChanged();
+					//show(1);
+					//mediaPlayer.start();
+					}
+				}
+				//tag1=false;
+				//tb8.setChecked(true);				
+				break;
+			default:
+				break;
+			}
+		}/*else{
+			switch (i) {
+			case 0:
+				tag1=true;
+				//tb8.setChecked(false);				
+				break;
+			case 1:
+				tag2=true;
+				//tb7.setChecked(false);				
+				break;
+			case 2:
+				tag3=true;
+				//tb6.setChecked(false);				
+				break;
+			case 3:
+				tag4=true;
+				//tb5.setChecked(false);				
+				break;
+			case 4:
+				//tb4.setChecked(false);	
+				tag5=true;
+				break;
+			case 5:
+				tag6=true;
+				//tb3.setChecked(false);				
+				break;
+			case 6:
+				tag7=true;
+				//tb2.setChecked(false);				
+				break;
+			case 7:
+				//tb1.setChecked(false);				
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	
+*/
+	
+	
 	@Override
 	public void onClick(View v) {
 
 		switch (v.getId()) {
+		case R.id.power:
+			if (!this.flag) {
+				BeepClass.IoctlRelay(BEEP_ON);
+				try{
+					Thread.sleep(500);
+				}
+				catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				BeepClass.IoctlRelay(BEEP_OFF);
+				
+				
+				String str1 ="常欢熊";
+				if(str1.length()!=0){
+					byte[][] data = FontClass.getInstance().setContent(str1,this.getAssets());
+					//icon = getIcon(data[0]);
+//					清空数据
+					//adapter.clear();
+//					初始化数据
+					//initData(icon);
+//					通知数据改变
+					//adapter.notifyDataSetChanged();
+					//show(1);
+					//mediaPlayer.start();
+				}
+				
+				
+				
+			}
+			break;
 		case R.id.submit:
 			String content = text.getText().toString();
 			Air.tent=content;
@@ -139,15 +302,55 @@ public class MainActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.count:
 			if (!this.flag) {
-				MyThread thread = new MyThread();
+				//MyThread thread = new MyThread();
 				this.flag = true;
 				LedClass.IoctlLed(0, 1);
-				thread.start();
+			    BeepClass.IoctlRelay(BEEP_ON);
+				try{
+					Thread.sleep(500);
+				}
+				catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				BeepClass.IoctlRelay(BEEP_OFF);
+				String start = text.getText().toString();
+				long total = Integer.valueOf(start).intValue();
+				String temp;
+				while(total < 200)
+				{
+					total = total + 10;
+					temp = String.valueOf(total);
+					this.updateText(Integer.valueOf(temp));
+					try{
+						Thread.sleep(1000);
+					}catch(InterruptedException e){
+						e.printStackTrace();
+					}
+				}
+				LedClass.IoctlLed(0, 0);
+				//thread.start();
 			}
 			break;
 		case R.id.stop:
 			this.flag = false;
-			LedClass.IoctlLed(0, 0);
+			LedClass.IoctlLed(3, 1);
+			String stop = text.getText().toString();
+			long total = Integer.valueOf(stop).intValue();
+			String temp;
+			while(total > 0)
+			{
+				total = total - 10;
+				temp = String.valueOf(total);
+				this.updateText(Integer.valueOf(temp));
+				try{
+					Thread.sleep(1000);
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}
+			}
+			LedClass.IoctlLed(3, 0);
+			//this.updateText(Integer.valueOf(stop));
+			
 			break;
 		case R.id.button1:
 			if(is_lock==0){
@@ -167,6 +370,23 @@ public class MainActivity extends Activity implements OnClickListener {
 		default:
 			break;
 		}
+	}
+	
+	
+	
+	public int[] getIcon(byte[] data) {
+		int[] arr = new int[256];
+		int n = 0;
+		for(int k=0; k<16; k++){
+	        for(int j=0; j<2; j++){
+	        	char[] cs = Integer.toBinaryString(data[k*2+j]&0xFF).toCharArray();
+	            for(int i=0; i<8; i++){
+	            	int len = cs.length;	
+	            	n++;
+	            }	
+	        }        
+	    }
+		return arr;
 	}
 	
 	public void updateText(final int arg){
