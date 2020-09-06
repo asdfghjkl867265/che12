@@ -89,8 +89,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	public void init() {
 		this.display = (View) findViewById(R.id.display1);
 		this.count_btn = (Button) display.findViewById(R.id.count);
-		this.text = (EditText) display.findViewById(R.id.editText1);
-		this.text2 = (EditText) display.findViewById(R.id.editText2);
+		//this.text = (EditText) display.findViewById(R.id.editText1);
+		//this.text2 = (EditText) display.findViewById(R.id.editText2);
 		this.counterText = (TextView) display.findViewById(R.id.counterText);
 		this.textview1 = (TextView) display.findViewById(R.id.textView1);
 		//textview2.setText("100");
@@ -260,9 +260,9 @@ public class MainActivity extends Activity implements OnClickListener {
 				BeepClass.IoctlRelay(BEEP_OFF);
 				
 				
-				String str1 ="常欢熊";
-				if(str1.length()!=0){
-					byte[][] data = FontClass.getInstance().setContent(str1,this.getAssets());
+				//String str1 ="常欢熊";
+				//if(str1.length()!=0){
+					//byte[][] data = FontClass.getInstance().setContent(str1,this.getAssets());
 					//icon = getIcon(data[0]);
 //					清空数据
 					//adapter.clear();
@@ -272,13 +272,13 @@ public class MainActivity extends Activity implements OnClickListener {
 					//adapter.notifyDataSetChanged();
 					//show(1);
 					//mediaPlayer.start();
-				}
+				//}
 				
 				
 				
 			}
 			break;
-		case R.id.submit:
+		/*case R.id.submit:
 			String content = text.getText().toString();
 			Air.tent=content;
 			flag = false;
@@ -288,7 +288,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			} else {
 				this.updateText(Integer.valueOf(content));
 			}
-			break;
+			break;*/
 		case R.id.okoil:
 			String content1 = text2.getText().toString();
 			Air.oil=content1;
@@ -313,10 +313,11 @@ public class MainActivity extends Activity implements OnClickListener {
 					e.printStackTrace();
 				}
 				BeepClass.IoctlRelay(BEEP_OFF);
-				String start = text.getText().toString();
+				//String start = text.getText().toString();
+				String start = String.valueOf(0);
 				long total = Integer.valueOf(start).intValue();
 				String temp;
-				while(total < 200)
+				while(total < 80)
 				{
 					total = total + 10;
 					temp = String.valueOf(total);
@@ -334,7 +335,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		case R.id.stop:
 			this.flag = false;
 			LedClass.IoctlLed(3, 1);
-			String stop = text.getText().toString();
+			//String stop = text.getText().toString();
+			String stop = String.valueOf(80);
 			long total = Integer.valueOf(stop).intValue();
 			String temp;
 			while(total > 0)
