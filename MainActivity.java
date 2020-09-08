@@ -54,15 +54,17 @@ import android.widget.ToggleButton;
 @SuppressLint({ "ShowToast", "HandlerLeak" }) 
 public class MainActivity extends Activity implements OnClickListener {
 	private View display;
-	private EditText text;
-	private EditText text2;
+	//private EditText text;
+	//private EditText text2;
 	private TextView counterText;
-	private TextView textview1;
-	private TextView textview2;
+	//private TextView textview1;
+	//private TextView textview2;
 	private Button count_btn;
-	private Button count_submit;
+	private Button count_front;
+	private Button count_back;
 	private Button count_stop;
-	private Button count_okoil;
+	private Button count_in;
+	private Button count_out;
 	private Button lock;
 	private Button count_power;
 	private int[] icon;
@@ -91,22 +93,26 @@ public class MainActivity extends Activity implements OnClickListener {
 		this.count_btn = (Button) display.findViewById(R.id.count);
 		//this.text = (EditText) display.findViewById(R.id.editText1);
 		//this.text2 = (EditText) display.findViewById(R.id.editText2);
-		this.counterText = (TextView) display.findViewById(R.id.counterText);
-		this.textview1 = (TextView) display.findViewById(R.id.textView1);
+	    this.counterText = (TextView) display.findViewById(R.id.counterText);
+		//this.textview1 = (TextView) display.findViewById(R.id.textView1);
 		//textview2.setText("100");
-		this.textview2 = (TextView) display.findViewById(R.id.textView2);
-		textview2.setText("油量：");
-		this.count_submit = (Button) display.findViewById(R.id.submit);
-		this.count_okoil = (Button) display.findViewById(R.id.okoil);
+		//this.textview2 = (TextView) display.findViewById(R.id.textView2);
+		//textview2.setText("油量：");
+		this.count_front = (Button) display.findViewById(R.id.front);
+		this.count_back = (Button) display.findViewById(R.id.back);
 		this.count_power = (Button)display.findViewById(R.id.power);
 		this.count_stop = (Button) display.findViewById(R.id.stop);
-		this.lock = (Button) display.findViewById(R.id.button1);
-		this.count_submit.setOnClickListener(this);
-		this.count_okoil.setOnClickListener(this);
+		this.count_in = (Button) display.findViewById(R.id.in);
+		this.count_out = (Button) display.findViewById(R.id.out);
+		this.lock = (Button) display.findViewById(R.id.lock);
+		this.count_front.setOnClickListener(this);
+		this.count_back.setOnClickListener(this);
 		this.count_btn.setOnClickListener(this);
 		this.count_stop.setOnClickListener(this);
 		this.lock.setOnClickListener(this);
 		this.count_power.setOnClickListener(this);
+		this.count_in.setOnClickListener(this);
+		this.count_out.setOnClickListener(this);
 		int err = Seg7Class.Init();
 		LedClass.Init();
 		BeepClass.Init();
@@ -289,7 +295,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				this.updateText(Integer.valueOf(content));
 			}
 			break;*/
-		case R.id.okoil:
+		/*case R.id.okoil:
 			String content1 = text2.getText().toString();
 			Air.oil=content1;
 			//flag = false;
@@ -299,11 +305,11 @@ public class MainActivity extends Activity implements OnClickListener {
 			} else {
 			    textview1.setText(Air.oil);
 			}
-			break;
+			break;*/
 		case R.id.count:
 			if (!this.flag) {
 				//MyThread thread = new MyThread();
-				this.flag = true;
+				this.flag = false;
 				LedClass.IoctlLed(0, 1);
 			    BeepClass.IoctlRelay(BEEP_ON);
 				try{
@@ -336,7 +342,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			this.flag = false;
 			LedClass.IoctlLed(3, 1);
 			//String stop = text.getText().toString();
-			String stop = String.valueOf(80);
+			String stop = String.valueOf(50);
 			long total = Integer.valueOf(stop).intValue();
 			String temp;
 			while(total > 0)
@@ -354,19 +360,134 @@ public class MainActivity extends Activity implements OnClickListener {
 			//this.updateText(Integer.valueOf(stop));
 			
 			break;
-		case R.id.button1:
+		case R.id.front:
+			this.flag = false;
+			LedClass.IoctlLed(1, 0);
+			LedClass.IoctlLed(2, 0);
+			//String stop = text.getText().toString();
+			String front = String.valueOf(80);
+			long front1 = Integer.valueOf(front).intValue();
+			String front2;
+			while(front1 > 40)
+			{
+				front1 = front1 - 10;
+				front2 = String.valueOf(front1);
+				this.updateText(Integer.valueOf(front2));
+				try{
+					Thread.sleep(1000);
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}
+			}
+			while(front1 < 80)
+			{
+				front1 = front1 + 10;
+				front2 = String.valueOf(front1);
+				this.updateText(Integer.valueOf(front2));
+				try{
+					Thread.sleep(1000);
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}
+			}
+			LedClass.IoctlLed(1, 1);
+			LedClass.IoctlLed(2, 1);
+			//this.updateText(Integer.valueOf(stop));
+			
+			break;
+		case R.id.back:
+			this.flag = false;
+			LedClass.IoctlLed(1, 0);
+			LedClass.IoctlLed(2, 0);
+			//String stop = text.getText().toString();
+			String back = String.valueOf(80);
+			long back1 = Integer.valueOf(back).intValue();
+			String back2;
+			while(back1 < 120)
+			{
+				back1 = back1 + 10;
+				back2 = String.valueOf(back1);
+				this.updateText(Integer.valueOf(back2));
+				try{
+					Thread.sleep(1000);
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}
+			}
+			while(back1 > 80)
+			{
+				back1 = back1 - 10;
+				back2 = String.valueOf(back1);
+				this.updateText(Integer.valueOf(back2));
+				try{
+					Thread.sleep(1000);
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}
+			}
+			LedClass.IoctlLed(1, 1);
+			LedClass.IoctlLed(2, 1);
+			//this.updateText(Integer.valueOf(stop));
+			
+			break;
+		case R.id.in:
+			this.flag = false;
+			LedClass.IoctlLed(0, 1);
+			//String stop = text.getText().toString();
+			try{
+				Thread.sleep(3000);
+			}catch(InterruptedException e){
+				e.printStackTrace();
+			}
+			LedClass.IoctlLed(1, 1);
+			LedClass.IoctlLed(2, 1);
+			LedClass.IoctlLed(0, 0);
+			//this.updateText(Integer.valueOf(stop));
+			
+			break;
+		case R.id.out:
+			this.flag = false;
+			LedClass.IoctlLed(1, 0);
+			LedClass.IoctlLed(2, 0);
+			LedClass.IoctlLed(3, 1);
+			//String stop = text.getText().toString();
+			String out = String.valueOf(80);
+			long out1 = Integer.valueOf(out).intValue();
+			String out2;
+			while(out1 > 50)
+			{
+				out1 = out1 - 10;
+				out2 = String.valueOf(out1);
+				this.updateText(Integer.valueOf(out2));
+				try{
+					Thread.sleep(1000);
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}
+			}
+			LedClass.IoctlLed(3, 0);
+			//this.updateText(Integer.valueOf(stop));
+			
+			break;
+		case R.id.lock:
 			if(is_lock==0){
 				count_btn.setEnabled(false);
-				count_submit.setEnabled(false);
+				count_front.setEnabled(false);
 				count_stop.setEnabled(false);
-				count_okoil.setEnabled(false);
+				count_back.setEnabled(false);
+				count_in.setEnabled(false);
+				count_out.setEnabled(false);
+				count_power.setEnabled(false);
 				is_lock=1;
 			}
 			else{
 				count_btn.setEnabled(true);
-				count_submit.setEnabled(true);
+				count_front.setEnabled(true);
 				count_stop.setEnabled(true);
-				count_okoil.setEnabled(true);
+				count_back.setEnabled(true);
+				count_in.setEnabled(true);
+				count_out.setEnabled(true);
+				count_power.setEnabled(true);
 				is_lock=0;
 			}
 		default:
@@ -395,16 +516,14 @@ public class MainActivity extends Activity implements OnClickListener {
 		String str = addZero(String.valueOf(arg));
 		this.counterText.setText(str);
 	
-		this.textview1.setText(Air.oil);
-		/**
-		 * 请在此补充硬件调用函数
-		*/
+		//this.textview1.setText(Air.oil);
+	
 		new Thread(new Runnable() {
 			public void run() {
 				Seg7Class.Seg7Show(arg);
 			}
 		}).start();
-	}
+	} 
 
 	// 不足4位进行补零
 	public String addZero(String content) {
